@@ -1,0 +1,499 @@
+﻿#summary get start with c programming on Unix
+
+= Introduction =
+
+Here is a tutorials from http://users.actcom.co.il/~choo/lupg/tutorials/index.html
+
+All the test codes in under http://cooldoger.googlecode.com/svn/sandbox/cTutorials/
+
+= 1. Compiling C/C++ Programs On Unix =
+
+== Compiling A Single-source "C" Program ==
+{{{
+cc single_main.c
+}}}
+or
+{{{
+cc single_main.c -o single_main
+}}}
+
+Worth to mention, the difference between _cc_ and _gcc_ is, _cc_ means c compiler, it was wildly used on Unix system, and it's a commercial software. _gcc_ is a free software, and it means Gnu Compiler Collection, so it can compile Fortran, Ada, etc. But in some Linux system, _cc_ is point to _gcc_. It's the same program, link _cc_ to _gcc_ just for compatablity to Unix style.
+
+== Running The Resulting Program ==
+{{{
+single_main
+}}}
+may not work, because this executable file may not in the PATH variable.
+{{{
+/home/jay/single_main
+./single_main
+}}}
+We can explicitly told the Shell to execute the program, or usr _./executablefile_ if the executable file under current directory.
+
+The permissions of the file may prevent it from execution. The follow command can make sure the user have all the permissions:
+{{{
+chmod u+rwx single_main
+}}}
+
+== Creating Debu-Ready Code ==
+{{{
+cc -g single_main.c -o single_main
+}}}
+The _-g_ flag tells the compiler to use debug info.
+To remove the debug info, use the _strip_ command:
+{{{
+strip single_main
+}}}
+
+== Creating Optimized Code ==
+Use the _-O_ flag to optimize code:
+{{{
+cc -O single_main.c -o single_main
+}}}
+In the gcc _-O_ is the equle to _-O1_, and _-O0_ means no optimization.
+
+== Getting Extra Compiler Warnings ==
+User the _-Wall_ flag to show more warnings.
+{{{
+cc -Wall single_main.c -o single_main.c
+}}}
+
+== Compiling A Multi-Source "C" Program ==
+Two choices:
+{{{
+cc main.c file1.c file2.c -o hello_world
+}}}
+or
+{{{
+cc -c main.c
+cc -c file1.c
+cc -c file2.c
+cc main.o file1.o file2.o -o hello_world
+}}}
+
+== Getting a Deeper Understanding - Compilation Steps ==
+_cc_ is like a engine, it invoke a lot of other tools one by one, generally it contains follow step:
+# C Pre-Processor
+You can invoke it separately on your program, usually with:
+{{{
+cc -E single_main.c
+}}}
+You can see the result of it is very big and contains the _head.h_, actually it will handle the pre-processor definitions like #include files, #define macros, conditional source code inclusion with #ifdef, etc. 
+
+# The C Compiler
+It translates the input file into assembly language. As you saw, we use the _-c" flag to invoke it.
+
+# Optimizer
+Sometimes comes as a separate module and sometimes as the found inside the compiler module.
+
+# Assembler
+It takes assembly language and translates it to machine language code. If you don't want to have the machine code, you can use this command to have a assembly code:
+{{{
+cc -S single_main.c
+}}}
+Then you will have a _single_main.s_ contains assembly code.
+
+# Linker-Loader
+This is the tool that takes all the object files (and C libraries), and links them together, to form one executable file, in a format the operating system supports, like "ELF".
+
+= 2. Debugging With "gdb" =
+
+= 3. Automating Program Compilation Using Makefiles =
+
+== The Structure Of A Makefile ==
+  * Variable Definitions
+  {{{
+  CFLAGS = -g -Wall
+  SRCS = main.c file1.c file2.c
+  CC = gcc
+  }}}
+  * Dependency Rules
+  {{{
+  main.o: main.c
+  		gcc -g -Wall -c main.c
+  }}}
+  * Comments
+  Start with "#" sign.
+
+== Order Of Compilation ==
+
+== Starting Small - A Single-Source Makefile Example ==
+
+= 4. Manipulating Files And Directories In Unix =
+
+= 5. Building and Using Static And Shared "C" Libraries =
+
+= 6. Unix Signals Programming =
+
+= 7. Internetworking With Unix Sockets =
+
+= 8. Accessing User Infomation On A Unix System =
+
+= 9. Graphics Programming =
+
+= 10. Unix And C/C++ Runtime Memory Management For Programmers =
+
+= 11. Parallel Programming - Basic Theory For The Unwary =
+
+= 12. Multi-Threaded Programming With The Pthreads Library =
+
+== Creating And Destroying Threads ==
+{{{
+#include <stdio.h>
+#include <pthread.h>
+
+void* do_loop(void* data)
+{
+	int i;
+	int j;
+	int me = *((int*)data);
+
+	for (i=0; i<10; i++) {
+		for (j=0; j<50000000; j++)
+			;
+		printf("'%d' - Got '%d'\n", me, i);
+	}
+//	pthread_exit(NULL);
+}
+
+int main(int argc, char* argv[])
+{
+	int	thr_id;
+	pthread_t p_thread;
+	pthread_t p_thread2;
+	int	a = 1;
+	int 	b = 2;
+	int 	c = 3;
+
+//	pthread_exit(NULL);
+	thr_id = pthread_create(&p_thread, NULL, do_loop, (void*)&a);
+	thr_id = pthread_create(&p_thread2, NULL, do_loop, (void*)&b);
+//	do_loop((void*)&a);
+//	do_loop((void*)&b);
+	do_loop((void*)&c);
+
+	return 0;
+}
+}}}
+To create a thread use _pthread_create()_. _pthread_exit()_ is to exit and free any thread-specific resources it is taking. There is no need to use this call at the end of the thread's top function, since when it returns, the thread would exit automatically anyway. And it's useful if we want to exit a thread in the middle of its execution. Just like _return NULL;_ in the function, or _exit(0)_ in the main function. _pthread_exit()_ also can terminate the main thread.
+
+== Synchronizing Threads With Mutexes ==
+  * The code with mutexes in it:
+{{{
+#include <stdio.h>       /* standard I/O routines                 */
+#include <pthread.h>     /* pthread functions and data structures */
+
+#define NUM_EMPLOYEES 2                   /* size of each array.    */
+
+/* global mutex for our program. assignment initializes it */
+pthread_mutex_t a_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+struct employee {
+    int number;
+    int id;
+    char first_name[20];
+    char last_name[30];
+    char department[30];
+    int room_number;
+};
+
+/* global variable - our employees array, with 2 employees */
+struct employee employees[] = {
+    { 1, 12345678, "danny", "cohen", "Accounting", 101},
+    { 2, 87654321, "moshe", "levy", "Programmers", 202}
+};
+
+/* global variable - employee of the day. */
+struct employee employee_of_the_day;
+
+/* function to copy one employee struct into another */
+void
+copy_employee(struct employee* from, struct employee* to)
+{
+    int rc;	/* contain mutex lock/unlock results */
+
+    /* lock the mutex, to assure exclusive access to 'a' and 'b'. */
+    rc = pthread_mutex_lock(&a_mutex);
+
+    to->number = from->number;
+    to->id = from->id;
+    strcpy(to->first_name, from->first_name);
+    strcpy(to->last_name, from->last_name);
+    strcpy(to->department, from->department);
+    to->room_number = from->room_number;
+
+    /* unlock mutex */
+    rc = pthread_mutex_unlock(&a_mutex);
+}
+
+/* function to be executed by the variable setting threads thread */
+void*
+do_loop(void* data)
+{
+    int my_num = *((int*)data);   /* thread identifying number         */
+
+    while (1) {
+        /* set employee of the day to be the one with number 'my_num'. */
+	copy_employee(&employees[my_num-1], &employee_of_the_day);
+    }
+}
+
+/* like any C program, program's execution begins in main */
+int
+main(int argc, char* argv[])
+{
+    int        i;              /* loop counter                          */
+    int        thr_id1;        /* thread ID for the first new thread    */
+    int        thr_id2;        /* thread ID for the second new thread   */
+    pthread_t  p_thread1;      /* first thread's structure              */
+    pthread_t  p_thread2;      /* second thread's structure             */
+    int        num1      = 1;  /* thread 1 employee number              */
+    int        num2      = 2;  /* thread 2 employee number              */
+    struct employee eotd;      /* local copy of 'employee of the day'.  */
+    struct employee* worker;   /* pointer to currently checked employee */
+
+    /* initialize employee of the day to first 1. */
+    copy_employee(&employees[0], &employee_of_the_day);
+
+    /* create a new thread that will execute 'do_loop()' with '1'       */
+    thr_id1 = pthread_create(&p_thread1, NULL, do_loop, (void*)&num1);
+    /* create a second thread that will execute 'do_loop()' with '2'    */
+    thr_id2 = pthread_create(&p_thread2, NULL, do_loop, (void*)&num2);
+
+    /* run a loop that verifies integrity of 'employee of the day' many */
+    /* many many times.....                                             */
+    for (i=0; i<600000; i++) {
+        /* save contents of 'employee of the day' to local 'worker'.    */
+        copy_employee(&employee_of_the_day, &eotd);
+	worker = &employees[eotd.number-1];
+
+        /* compare employees */
+	if (eotd.id != worker->id) {
+	    printf("mismatching 'id' , %d != %d (loop '%d')\n",
+		   eotd.id, worker->id, i);
+	    exit(0);
+	}
+	if (strcmp(eotd.first_name, worker->first_name) != 0) {
+	    printf("mismatching 'first_name' , %s != %s (loop '%d')\n",
+		   eotd.first_name, worker->first_name, i);
+	    exit(0);
+	}
+	if (strcmp(eotd.last_name, worker->last_name) != 0) {
+	    printf("mismatching 'last_name' , %s != %s (loop '%d')\n",
+		   eotd.last_name, worker->last_name, i);
+	    exit(0);
+	}
+	if (strcmp(eotd.department, worker->department) != 0) {
+	    printf("mismatching 'department' , %s != %s (loop '%d')\n",
+		   eotd.department, worker->department, i);
+	    exit(0);
+	}
+	if (eotd.room_number != worker->room_number) {
+	    printf("mismatching 'room_number' , %d != %d (loop '%d')\n",
+		   eotd.room_number, worker->room_number, i);
+	    exit(0);
+	}
+    }
+
+    printf("Glory, employees contents was always consistent\n");
+    
+    return 0;
+}
+}}}
+   * The code without mutex:
+{{{
+#include <stdio.h>       /* standard I/O routines                 */
+#include <pthread.h>     /* pthread functions and data structures */
+
+#define NUM_EMPLOYEES 2                   /* size of each array.    */
+
+struct employee {
+    int number;
+    int id;
+    char first_name[20];
+    char last_name[30];
+    char department[30];
+    int room_number;
+};
+
+/* global variable - our employees array, with 2 employees */
+struct employee employees[] = {
+    { 1, 12345678, "danny", "cohen", "Accounting", 101},
+    { 2, 87654321, "moshe", "levy", "Programmers", 202}
+};
+
+/* global variable - employee of the day. */
+struct employee employee_of_the_day;
+
+/* function to copy one employee struct into another */
+void
+copy_employee(struct employee* from, struct employee* to)
+{
+    to->number = from->number;
+    to->id = from->id;
+    strcpy(to->first_name, from->first_name);
+    strcpy(to->last_name, from->last_name);
+    strcpy(to->department, from->department);
+    to->room_number = from->room_number;
+}
+
+/* function to be executed by the variable setting threads thread */
+void*
+do_loop(void* data)
+{
+    int my_num = *((int*)data);   /* thread identifying number         */
+
+    while (1) {
+        /* set employee of the day to be the one with number 'my_num'. */
+	copy_employee(&employees[my_num-1], &employee_of_the_day);
+    }
+}
+
+/* like any C program, program's execution begins in main */
+int
+main(int argc, char* argv[])
+{
+    int        i;              /* loop counter                          */
+    int        thr_id1;        /* thread ID for the first new thread    */
+    int        thr_id2;        /* thread ID for the second new thread   */
+    pthread_t  p_thread1;      /* first thread's structure              */
+    pthread_t  p_thread2;      /* second thread's structure             */
+    int        num1      = 1;  /* thread 1 employee number              */
+    int        num2      = 2;  /* thread 2 employee number              */
+    struct employee eotd;      /* local copy of 'employee of the day'.  */
+    struct employee* worker;   /* pointer to currently checked employee */
+
+    /* initialize employee of the day to first 1. */
+    copy_employee(&employees[0], &employee_of_the_day);
+
+    /* create a new thread that will execute 'do_loop()' with '1'       */
+    thr_id1 = pthread_create(&p_thread1, NULL, do_loop, (void*)&num1);
+    /* create a second thread that will execute 'do_loop()' with '2'    */
+    thr_id2 = pthread_create(&p_thread2, NULL, do_loop, (void*)&num2);
+
+    /* run a loop that verifies integrity of 'employee of the day' many */
+    /* many many times.....                                             */
+    for (i=0; i<60000000; i++) {
+        /* save contents of 'employee of the day' to local 'worker'.    */
+        copy_employee(&employee_of_the_day, &eotd);
+	worker = &employees[eotd.number-1];
+
+        /* compare employees */
+	if (eotd.id != worker->id) {
+	    printf("mismatching 'id' , %d != %d (loop '%d')\n",
+		   eotd.id, worker->id, i);
+	    exit(0);
+	}
+	if (strcmp(eotd.first_name, worker->first_name) != 0) {
+	    printf("mismatching 'first_name' , %s != %s (loop '%d')\n",
+		   eotd.first_name, worker->first_name, i);
+	    exit(0);
+	}
+	if (strcmp(eotd.last_name, worker->last_name) != 0) {
+	    printf("mismatching 'last_name' , %s != %s (loop '%d')\n",
+		   eotd.last_name, worker->last_name, i);
+	    exit(0);
+	}
+	if (strcmp(eotd.department, worker->department) != 0) {
+	    printf("mismatching 'department' , %s != %s (loop '%d')\n",
+		   eotd.department, worker->department, i);
+	    exit(0);
+	}
+	if (eotd.room_number != worker->room_number) {
+	    printf("mismatching 'room_number' , %d != %d (loop '%d')\n",
+		   eotd.room_number, worker->room_number, i);
+	    exit(0);
+	}
+    }
+
+    printf("Glory, employees contents was always consistent\n");
+    
+    return 0;
+}
+}}}
+
+There two codes shows that with out _mutex_ the thread may cause problems when it assign the value to many public fields.
+
+Here is the code shows the deadlock with two mutex(one mutex can also be in deadlock, if one thread lock the mutex, and never unlock it):
+{{{
+#include <stdio.h>
+#include <pthread.h>
+
+pthread_mutex_t a_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t b_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t c_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+int a = 9;
+int b = 9;
+
+void thr1_fun(void){
+	int rc;
+	printf("thr1\n");
+	rc = pthread_mutex_lock(&a_mutex);
+	printf("[mutex] thr1 lock a_mutex, rc = '%d' \n", rc);
+	sleep(1);
+	rc = pthread_mutex_lock(&b_mutex);
+	printf("[mutex] thr1 lock b_mutex, rc = '%d' \n", rc);
+	a = 1;
+	printf("thr1 set a finish!\n");
+//	rc = pthread_mutex_lock(&a_mutex);
+	sleep(1);
+	b = 1;
+	printf("thr1 set b finish!\n");
+	rc = pthread_mutex_unlock(&a_mutex);
+	printf("[mutex] thr1 release a_mutex, rc = '%d' \n", rc);
+	rc = pthread_mutex_unlock(&b_mutex);
+	printf("[mutex] thr1 release b_mutex, rc = '%d' \n", rc);
+}
+
+void thr2_fun(void){
+	int rc;
+	printf("thr2\n");
+	rc = pthread_mutex_lock(&b_mutex);
+	printf("[mutex] thr2 lock b_mutex, rc = '%d' \n", rc);
+	sleep(1);
+	rc = pthread_mutex_lock(&a_mutex);
+	printf("[mutex] thr2 lock a_mutex, rc = '%d' \n", rc);
+	a = 2;
+	printf("thr2 set a finish!\n");
+	sleep(2);
+	b = 2;
+	printf("thr2 set b finish!\n");
+	rc = pthread_mutex_unlock(&b_mutex);
+	printf("[mutex] thr2 release b_mutex, rc = '%d' \n", rc);
+	rc = pthread_mutex_unlock(&a_mutex);
+	printf("[mutex] thr2 release a_mutex, rc = '%d' \n", rc);
+}
+
+int main(int argc, char* argv[])
+{
+	int thr_id1, thr_id2, rc;
+	pthread_t p_thread1;
+	pthread_t p_thread2;
+
+	thr_id1 = pthread_create(&p_thread1, NULL, thr1_fun, NULL);
+	thr_id2 = pthread_create(&p_thread2, NULL, thr2_fun, NULL);
+	
+	sleep(5);
+	printf("Begin to destory the mutex\n");
+	rc = pthread_mutex_destroy(&a_mutex);
+	printf("[mutex] destory mutex a, rc = '%d' \n", rc);
+	rc = pthread_mutex_destroy(&b_mutex);
+	printf("[mutex] destory mutex b, rc = '%d' \n", rc);
+	rc = pthread_mutex_destroy(&c_mutex);
+	printf("[mutex] destory mutex c, rc = '%d' \n", rc);
+	printf("Destory the mutex over\n");
+
+	sleep(10);
+	printf("a = %d\nb = %d\n", a, b);
+	printf("main is over!\n");
+}
+}}}
+In this example, two threads: _p_thread1_ and _p_thread2_ will in deadlock, because _p_thread1_ holds _mutex_a_ and _p_thread2_ holds _mutex_b_, both threads wait the other unlock the mutex. The main thread will exit anyway after two _sleep_s. When the mutex is still in use(some thread has locked this mutex), pthread_mutex_destroy will return fail. If some other thread want to use a destoried mutex, it will return fail(_rc_ = 22). And mutex destory also cannot solve the deadlock, it cannot force the mutex hold thread to release the mutex.
+
+=== difference between PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP and PTHREAD_MUTEX_INITIALIZER ===
+Simply, recursive mutex can be locked more than once, and mutex only can be locked once, the second lock will block the thread. ( double lock only occurs in the same thread. If the mutex has been locked, both recursive mutex and ordinary mutex will make the other thread stop. So recursive mutex only useful in condition variables and it can be used in it's sub function to prevent it's sub function's synchronization without another mutex. )  
+
+== Refined Synchronization - Condition Variables ==
+
+A condition variable is a mechanism that allows threads to wait for some event to occur. 

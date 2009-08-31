@@ -1,0 +1,355 @@
+﻿#summary Some Java Topics from Web
+
+= Introduction =
+
+Here is some Java Topics from Web.
+
+= 1. Advanced Topics in Programming Languages: Java Puzzlers, Episode VI =
+
+== Introduction ==
+This topic come from google video. http://video.google.com/videoplay?docid=9214177555401838409 which contains several puzzlers, you can checkout all there code from http://cooldoger.googlecode.com/svn/sandbox/java
+
+== a. The Joy of Sets ==
+
+{{{
+package com.cooldoger.sandbox;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class ShortSet {
+	public static void main(String[] args) {
+		Set<Short> s = new HashSet<Short>();
+		for (short i = 0; i < 100; i++) {
+			s.add(i);
+			s.remove(i - 1);
+		}
+		System.out.println(s.size());
+	}
+}
+}}}
+You may think the answer would be 1, because 100 objects will be added to *_s_* and 99 will be deleted from it.
+Actually the answer is 100. Because every time we add a *_Short_* object to the HashSet, but *_i-1_* is a int-valued, so it removed nothing. *_Collection< E >.remove_* takes *_Object_*, not *_E_*. So *_Map_* has that problem too.
+{{{
+package com.cooldoger.sandbox;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapSet {
+	public static void main(String[] args) {
+		Map<Short,String> m = new HashMap<Short,String>();
+		for(short i = 0; i < 100; i++) {
+			m.put(i,"Hi");
+			m.remove(i - 1);
+		}
+		System.out.print(m.size());
+	}
+}
+}}}
+This also print 100.
+So should avoid short, prefer int and long.
+
+== b. More Joy of Sets ==
+{{{
+package com.cooldoger.sandbox;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class UrlSet {
+	private static final String[] URL_NAMES = {
+		"http://cooldoger.googlecode.com",
+		"http://www.cooldoger.com",
+		"http://www.ebay.com",
+		"http://www.cooldoger.com",
+		"http://cooldoger.com",
+		"http://www.baidu.com",
+	};
+	
+	public static void main(String[] args) 
+	throws MalformedURLException 
+	{
+		Set<URL> favorites = new HashSet<URL>();
+		for (String urlName : URL_NAMES)
+			favorites.add(new URL(urlName));
+		System.out.println(favorites.size());
+	}
+}
+}}}
+You may think this print 5, because 6 urls in URL_NAMES, and two urls are equal, so it's same in the HashSet. But URL is identified by IP address, so www.cooldoger.com and cooldoger.com are the same. So the collect answer is 4.
+Here is the test for the URL:
+{{{
+package com.cooldoger.sandbox;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class UrlTest {
+
+	public static void main(String[] args)
+	throws MalformedURLException
+	{
+		URL[] URLS = {
+		new URL("http://cooldoger.com"),
+		new URL("http://www.cooldoger.com"),
+		new URL("http://cooldoger.net"),
+		new URL("http://cooldoger.cn"),
+		new URL("http://google.com"),
+		new URL("http://google.net"),
+		new URL("http://cooldoger.googlecode.com"),
+		};
+		
+		for (URL url1 : URLS){
+			for (URL url2 : URLS){
+				String tmp = url1.equals(url2)? "1 ":"0 ";
+				System.out.print(tmp);
+			}
+			System.out.println();
+		}		
+	}
+}
+}}}
+The result depends on whether your system is connected to network. If it connected to network, it the url point to same host, the URL object it create will be equal.
+So use URI instead. The code below will out put 5:
+{{{
+package com.cooldoger.sandbox;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.net.URI;
+
+public class UriSet {
+	private static final String[] URI_NAMES = {
+		"http://cooldoger.googlecode.com",
+		"http://www.cooldoger.com",
+		"http://www.ebay.com",
+		"http://www.cooldoger.com",
+		"http://cooldoger.com",
+		"http://www.baidu.com",
+	};
+	
+	public static void main(String[] args) {
+		Set<URI> favorites = new HashSet<URI>();
+		for (String uriName : URI_NAMES)
+			favorites.add(URI.create(uriName));
+		System.out.println(favorites.size());
+	}
+}
+}}} 
+
+== c. Racy Little Number ==
+{{{
+package com.cooldoger.sandbox;
+
+public class JunitTest extends junit.framework.TestCase{
+	int number;
+	
+	public void test() throws InterruptedException {
+		number = 0;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				assertEquals(2, number);
+			}
+		});
+		number = 1;
+		t.start();
+		number++;
+		t.join();
+	}
+}
+}}}
+"The result may depends on the race of the thread, if the conditional statement runs before number++ it will return false, if number++ runs before assertEquals(), it'll return true." That's wrong! This Junit test always return true. Because Junit throw an error when the assert statement not satisfied. But Junit cannot catch the errors thrown by new thread. 
+The code below will print 1 and error, because error is caught.
+{{{
+package com.cooldoger.sandbox;
+
+import junit.framework.AssertionFailedError;
+
+public class JunitSample extends junit.framework.TestCase{
+
+	public void test() throws InterruptedException {
+		int number = 1;
+		try {
+			assertEquals(1, number);
+			System.out.println("1");
+			assertEquals(2, number);
+			System.out.println("2");
+		}catch (AssertionFailedError e){
+			System.out.println("error!");
+		}
+	}
+}
+}}}
+To fix the problem cased by the thread, we should catch the error thrown by the thread, and share it in the class. *_volatile_* is used to synchronize data. [http://www.ibm.com/developerworks/java/library/j-jtp06197.html?S_TACT=105AGX52&S_CMP=cn-a-j Java theory and practice: Managing volatility]
+{{{
+package com.cooldoger.sandbox;
+
+public class JunitTestPro extends junit.framework.TestCase {
+	int number;
+	
+	public void test() throws InterruptedException {
+		number = 0;
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					assertEquals(2, number);
+				} catch (Error e) {
+					error = e;
+				} catch (Exception e) {
+					exception = e;
+				}
+			}
+		});
+		number = 1;
+		t.start();
+		number++;
+		t.join();
+	}
+	
+	volatile Exception exception;
+	volatile Error error;
+	
+	// Triggers test case failure if any thread asserts failed
+	public void tearDown() throws Exception {
+		if (error != null)
+			throw error;
+		if (exception != null)
+			throw exception;
+	}
+}
+}}}
+Worth to mention, tearDown() is the method which will be invoked by Junit when every testcase finished. But this is the not great solution, you should avoid to use thread in Junit.
+
+== d. Elvis Lives Again ==
+{{{
+package com.cooldoger.sandbox;
+
+public class Elvis {
+	// Singleton pattern: there's only one Elvis
+	public static final Elvis ELVIS = new Elvis();
+	private Elvis() { }
+	
+	private static final Boolean LIVING = true;
+	
+	private final Boolean alive = LIVING;
+	
+	public final Boolean lives() { return alive; }
+	
+	public static void main(String[] args) {
+		System.out.println(ELVIS.lives() ? 
+				"Shanghai" : "Beijing");
+	}
+}
+}}}
+If you think the code above print Shanghai, you wrong again.
+This code will throw a NullPointerException, here are two methods will not throw Exception and print Shanghai.
+{{{
+package com.cooldoger.sandbox;
+
+public class ElvisPro {
+	// Singleton pattern: there's only one Elvis
+
+	private ElvisPro() { }
+	
+	private static final Boolean LIVING = true;
+	public static final ElvisPro ELVIS = new ElvisPro();	
+	private final Boolean alive = LIVING;
+	
+	public final Boolean lives() { return alive; }
+	
+	public static void main(String[] args) {
+		System.out.println(ELVIS.lives() ? 
+				"Shanghai" : "Beijing");
+	}
+}
+}}}
+{{{
+package com.cooldoger.sandbox;
+
+public class ElvisUltra {
+	// Singleton pattern: there's only one Elvis
+	public static final ElvisUltra ELVIS = new ElvisUltra();
+	private ElvisUltra() { }
+	
+	private static final boolean LIVING = true;
+	
+	private final Boolean alive = LIVING;
+	
+	public final Boolean lives() { return alive; }
+	
+	public static void main(String[] args) {
+		System.out.println(ELVIS.lives() ? 
+				"Shanghai" : "Beijing");
+	}
+}
+}}}
+Very little difference between there three codes. The main point the the *_Boolean LIVING = true_* Boolean is a wrapped primitive of boolean, it will create at run time(primitives variable will create at compile time). So an auto-unboxing will occur when the lives() function is invoked. At that time LIVING hasn't been initialized, so nullpointException will be thrown. 
+We can learn from this puzzler that never use Boolean as a three-valued return and watch out for circularities in class initialization, try to construct instances at end of class initialization.
+
+== e. Mind the Gap ==
+{{{
+package com.cooldoger.sandbox;
+
+import java.io.*;
+
+public class Gap {
+	private static final int GAP_SIZE = 10 * 1024;
+	public static void main(String[] args) 
+		throws IOException
+	{
+		File tmp = File.createTempFile("gap", ".txt");
+		FileOutputStream out = new FileOutputStream(tmp);
+		out.write(1);
+		out.write(new byte[GAP_SIZE]);
+		out.write(2);
+		out.close();
+		InputStream in = new BufferedInputStream(new FileInputStream(tmp));
+		int first = in.read();
+		in.skip(GAP_SIZE);
+		int last = in.read();
+		System.out.println(first + last);
+	}
+}
+}}}
+This puzzler is a defect of the API InputStream.skip(). It will not actually skip GAP_SIZE, if it was too big, like lager than 10,000. So *_first_* would be 1, and *_last_* would be 0, because *_in_* did not reach the end of the stream.
+The solution is write another function to do so:
+{{{
+package com.cooldoger.sandbox;
+
+import java.io.*;
+
+public class GapPro {
+	private static final int GAP_SIZE = 10 * 1024;
+	public static void main(String[] args) 
+		throws IOException
+	{
+		File tmp = File.createTempFile("gap", ".txt");
+		FileOutputStream out = new FileOutputStream(tmp);
+		out.write(1);
+		out.write(new byte[GAP_SIZE]);
+		out.write(2);
+		out.close();
+		InputStream in = new BufferedInputStream(new FileInputStream(tmp));
+		int first = in.read();
+//		in.skip(GAP_SIZE);
+		skipFully(in, GAP_SIZE);
+		int last = in.read();
+		System.out.println(first + last);
+	}
+	
+	static void skipFully(InputStream in, long nBytes) 
+			throws IOException {
+		long remaining = nBytes;
+		while (remaining != 0) {
+			long skipped = in.skip(remaining);
+			if (skipped == 0)
+				throw new EOFException();
+			remaining -= skipped;
+		}
+	}
+}
+}}}
+For this problem, we have to be careful when we use skip(). Wrap it if it was necessary, don't skip the return from the skip().

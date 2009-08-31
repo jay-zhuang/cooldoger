@@ -1,0 +1,65 @@
+﻿#summary home page
+#labels Featured,Home
+
+= Introduction =
+
+This project is just for myself to learn new program language or other technologies.
+
+= Content =
+
+== Python ==
+ * [PythonNotes Python learning notes]
+
+== Java ==
+
+  * [Ant Ant] 
+
+  * Basic
+
+  * Date Structure
+
+  * Algorithm
+
+  * Design Pattern 
+  
+  * [JavaTopics Topics]
+    # Advanced Topics in Programming Languages: Java Puzzlers, Episode VI
+
+== VI/Vim Editor ==
+
+  * [ViConfig Configuration]
+
+  * [ViTips Usage Tips]
+
+  * [ViPlugin Vi plugin]
+
+== Linux CLI usage ==
+  * [ClIBasic Basic]
+    # Tar
+
+  * [CLITopics Topics]
+    # Learn 10 good UNIX usage habits
+
+== C/C++ ==
+  * [CPPTopics Topics]
+    # Advanced Topics in Programming Languages Series: C++ Threads
+    # New Features in the Next C++ Standard 
+
+== Ruby/Ruby on Rails ==
+
+N/A
+
+== ActionScript3/Flex ==
+
+N/A
+
+== CSharp ==
+
+N/A
+
+== Object C ==
+
+N/A
+
+== Site Build ==
+  * [appspotBuild Google Engine Site Builder]

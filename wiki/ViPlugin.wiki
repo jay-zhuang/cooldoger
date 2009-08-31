@@ -1,0 +1,56 @@
+﻿#summary The usage of some vi plug-in
+
+= Introduction =
+
+List some useful vi plug-in
+
+= Contents =
+
+== 1. bufexplorer.vim ==
+
+http://www.vim.org/scripts/script.php?script_id=42
+
+=== Usage Tips ===
+
+{{{
+\be
+}}} 
+normal open
+
+{{{
+\bs
+}}}
+force horizontal split open
+
+{{{
+\bv
+}}}
+force vertical split open
+
+Because I have used tabbed buffer view, ':bn' ':bp' (mapped to < tab> and '`'), so '\bs' can be only used when there are too much buffer opened.
+
+== 2. taglist.vim ==
+
+http://www.vim.org/scripts/script.php?script_id=273
+
+=== Usage Tips ===
+
+{{{
+:Tlist
+:TlistTroggle
+}}}
+Either of above commands can troggle the taglist. In my option.vim, I have put the taglist windows on right side.
+_ctrl+ww_ can change between each windows. In the taglist windows _o_ will open the file in new window, and _enter_ will open the file in current window.
+I have mapped the _:TlistTroggle_ to _< F12>_.
+
+== 3. ALIGN ==
+
+http://www.vim.org/scripts/script.php?script_id=294
+
+=== Usage Tips ===
+
+http://mysite.verizon.net/astronaut/vim/align.html#Examples
+
+== 4. NERD tree ==
+
+http://www.vim.org/scripts/script.php?script_id=1658

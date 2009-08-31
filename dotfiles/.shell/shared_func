@@ -1,0 +1,193 @@
+#!/bin/sh
+
+# A life without 'diff'? Unimaginably!!!!11!
+function mdiff() { diff -rupNd "$1" "$2" > diff.`date "+%Y-%m-%d"`."$1"; }
+function udiff() { diff -urd $* | egrep -v "^Only in |^Binary files "; }
+function cdiff() { diff -crd $* | egrep -v "^Only in |^Binary files "; }
+
+# mkdir && cd
+function mcd() { mkdir "$@" && cd "$@"; }
+
+# cd && ls
+function cl() { cd $1 && ls -a; }
+
+# Use 'view' to read manpages, if u want colors, regex - search, ...
+# like vi(m).
+# It's shameless stolen from <http://www.vim.org/tips/tip.php?tip_id=167>
+function vman() {
+	command man $* | col -b | /usr/bin/view -c 'set ft=man nomod nolist' -
+}
+
+function mirror() {
+	lftp -c "mirror $@"
+}
+
+function start() { /etc/init.d/$1 start; }
+function stop()  { /etc/init.d/$1 stop;  }
+
+function vc() {
+	if [[ $# == 1 && ! -e $1  ]]; then
+		if [[ $1 == *.sh ]]; then
+			echo '#!/bin/sh' > $1
+			chmod +x $1
+		elif [[ $1 == *.rb ]]; then
+			echo '#!/bin/ruby' > $1
+			chmod +x $1
+		fi
+	fi
+	vi $@
+}
+
+function df() {
+	if [[ $# = 0 && -x /usr/bin/pydf ]]; then
+		command pydf
+	else
+		command df -h $*
+	fi
+}
+
+function bbs() {
+	if [[ "$LANG" = "zh_CN.UTF-8" ]]; then
+		luit -encoding GBK  telnet -8 bbs6
+	elif [[ "$LANG" = "zh_CN.GBK" || "$LC_ALL" = "zh_CN.GBK" ]]; then
+		telnet -8 bbs6
+	fi
+}
+
+tc () {
+	tar cjf `basename $1`.tar.bz2 $1
+}
+
+av () {
+	dpkg -l $@
+	apt-cache madison $@
+}
+
+ad () {
+        apt-cache show $@ | more
+}
+
+dL () {
+        dpkg -L $@ | more
+}
+
+# list the files of a package
+#function al() {
+#	local listfile=/var/lib/dpkg/info/${1}.list
+#	[[ -f $listfile ]] && less $listfile
+#}
+
+function lw () {
+	local whichcmd=`command which $1`
+	[[ -n "$whichcmd" ]] && ls -l "$whichcmd" && ldd "$whichcmd";
+}
+
+function nocomment () { cat $* | sed -e '/^[ ]*#.*/d' -e 's/[ ]*#.*$//' | uniq ; }
+
+function nfsmount() { mount -o tcp,soft,rsize=32768,wsize=32768 $* ; }
+
+function lomount() { mount -o loop  "$1" "$2" ; }
+function isomount() { mount -t iso9660 -o loop  "$1" "$2" ; }
+
+function pp () {		# ps
+	local pids="$(pidof $1)"
+	[[ -n $pids ]] && ps -fp $pids
+}
+
+# view log with colors
+if [[ -x /usr/bin/ccze ]]; then
+function lg() { /usr/bin/ccze -AC < $* | less ; }
+fi
+
+# colorizing the output of make
+# if [[ -x /usr/bin/colormake.pl ]]; then
+# function make() {
+#         local cpus=`grep -c processor /proc/cpuinfo`
+#         /usr/bin/make -j $cpus "$@" 2>&1 | colormake.pl
+# }
+# fi
+
+# Often needed (if i rape '$LS_COLORS' again *g*)
+function _colors() {
+ esc="\033["
+ echo -e "\t 40\t 41\t 42\t 43\t 44\t 45\t 46\t 47"
+ for fore in 30 31 32 33 34 35 36 37; do
+   line1="$fore  "
+   line2="    "
+   for back in 40 41 42 43 44 45 46 47; do
+     line1="${line1}${esc}${back};${fore}m Normal  ${esc}0m"
+     line2="${line2}${esc}${back};${fore};1m Bold    ${esc}0m"
+   done
+   echo -e "$line1\n$line2"
+ done
+}
+
+function test_color () {
+	echo -e "\e[38;$1;$(($2))m$1 bytes \e[0m\e[48;$1;$(($2))mcolor $2\e[0m"
+}
+
+#function mysvn () {
+# svn co svn+ssh://dufo.tugraz.at/repos/$1
+#}
+
+#function cvsd () { cvs diff -N $* 2>&1 | $PAGER; }
+#function cvsl () { cvs log $* 2>&1 | $PAGER; }
+#function cvsr () { rcs2log $* | $PAGER; }
+#function cvss () { cvs status -v $*; }
+#function cvsq () { cvs -nq update; }
+
+# Print the binary equivalent of a word (and back)
+#function bew() { perl -e 'print unpack "B*","'$1'"' ; perl -e 'print "\n"'; }
+#function web() { perl -e 'print pack "B*","'$1'"' ; perl -e 'print "\n"'; }
+
+# Print the hex equivalent of a word (and back)
+#function hew() { perl -e 'print unpack "H*","'$1'"' ; perl -e 'print "\n"'; }
+#function weh() { perl -e 'print pack "H*","'$1'"' ; perl -e 'print "\n"'; }
+
+# Use vim to convert plaintext to HTML
+#function 2html() {
+#vim -n -c ':so $VIMRUNTIME/syntax/2html.vim' -c ':wqa' $1 >/dev/null 2>&1
+#}
+
+
+# if [[ -f /etc/debian_version ]]; then
+# 
+# # handling of bugs
+#   deblistbugs() {
+#     severities="-s critical,grave,serious,important,normal,wishlist,minor"
+# 
+#     if test "x$1" != "x" ; then
+#       severities="-s $1"
+#     fi
+# 
+#     echo "Listing outstanding and open bugs with $severities"
+#     sudo apt-get -s upgrade | grep Inst | cut -d' ' -f2 | \
+#     xargs apt-listbugs -S outstanding,open $severities list
+#   }
+# 
+# # list bugs of packages to be upgraded
+#   debupdate() {
+#     echo "Listing bugs of packages to be upgraded:"
+#     sudo apt-get -s upgrade | grep Inst | cut -d' ' -f2 | \
+#     xargs apt-listbugs -I -l -g list
+#   }
+# 
+# # list bugs of a specific debian-package
+#   debpackbugs() {
+#     set -e
+#     severities="-s critical,grave,serious,important,normal,wishlist,minor"
+#     if test "x$1" != "x"; then
+#       severities="-s $1"
+#     fi
+# 
+#     grep -e ^Package:  < debian/control  | cut -d' ' -f2- | \
+#     xargs apt-listbugs -S outstanding,open $severities list
+#   }
+# 
+#   rc2rss() {
+#     num=`dpkg --get-selections | grep install | grep -v deinstall | awk -F' ' '{print $1;}' | wc -l`
+#     dpkg --get-selections | grep install | grep -v deinstall | awk -F' ' '{print $1;}' | \
+#     xargs -n $num apt-listbugs rss
+#   }
+# 
+# fi

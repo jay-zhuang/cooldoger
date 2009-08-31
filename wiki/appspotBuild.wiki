@@ -1,0 +1,20 @@
+#summary here is the info about my site build
+#labels Study
+
+= Introduction =
+
+The site address are:
+  * http://tanya.appspot.com 
+  * http://cooldoger.com 
+  * http://www.cooldoger.com
+
+All the code can be check out by: http://cooldoger.googlecode.com/svn/sitebuild/trunk
+
+= Warm up =
+
+== development environment setting up ==
+reference: http://www.ibm.com/developerworks/opensource/library/os-eclipse-mashup-google-pt1/
+  # Goolge Application Engine (GAE)
+  # Eclipse with pyDev
+
+= =

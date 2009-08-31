@@ -1,0 +1,6 @@
+#summary Vim usage tips
+
+= Introduction =
+
+= Reference =
+[http://www.moolenaar.net/habits.html Seven habits of effective text editing]

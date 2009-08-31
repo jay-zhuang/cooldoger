@@ -1,0 +1,109 @@
+#!/bin/sh
+
+alias e=vi
+alias iv=vi
+
+alias l=less
+alias x=startx
+alias q=quilt
+alias b=bzr
+alias s=svn
+
+alias diffstat='diffstat -p1 -w70'
+alias trueprint='trueprint --no-cover-sheet --no-file-index --no-page-break-after-function --ignore-form-feeds --no-holepunch --top-holepunch --no-page-furniture-lines --no-braces-depth --no-headers -3 --output -'
+
+alias grep='grep -s -E --color'
+if [[ -x /usr/bin/glark ]]; then
+        alias g='glark --binary-files=without-match'
+        alias gr='glark -r --binary-files=without-match'
+        alias gi='glark -i --binary-files=without-match'
+        alias gir='glark -ir --binary-files=without-match'
+else
+        alias g='grep -I'
+        alias gi='grep -Ii'
+        alias gr='grep -Ir'
+        alias gir='grep -Iir'
+fi
+
+# grep file
+alias gf='find . -type f -print0 | xargs -0 grep'
+# grep the history
+alias gh='history 0 | grep'
+
+alias du='du -h'
+alias tree='tree -N'
+alias free='free -m'
+
+# fake user-agent of wget
+alias wget-ua='wget --user-agent="Mozilla/4.0 (compatible; DAU 9.0; Wixdows NT 5.5; DT)"'
+#alias wget='tsocks wget --restrict-file-names=nocontrol'
+# alias mirror="wget --mirror --no-parent --convert-links --restrict-file-names=nocontrol"
+# alias mirror2="wget -m -p -np"
+
+alias last='last | head -n $(( +LINES ? LINES - 4 : 20 ))'
+
+# disk/memory/package space eaters
+alias sd="find -maxdepth 1 -print0 |xargs -0i du -ks {} |sort -rn |head -11 | cut -f2 | xargs -i du -hs {}"
+alias sm='ps aux --sort=rss'
+alias sp='dpkg-query -W --showformat='\''${Installed-Size} ${Package}\n'\'' | sort -n'
+
+alias p='ps ax'
+
+alias a='aptitude'
+[[ $USER = 'root' ]] && alias ai='aptitude install -t stable' \
+                     || alias ai='sudo aptitude install -t stable'
+[[ $USER = 'root' ]] && alias au='aptitude update' \
+                     || alias au='sudo aptitude update'
+[[ $USER = 'root' ]] && alias auu='aptitude update && aptitude upgrade' \
+                     || alias auu='sudo aptitude update && sudo aptitude upgrade'
+alias ac='apt-cache'
+# alias ad='apt-cache show'
+alias as='apt-cache search'
+alias asn='apt-cache search --names-only'
+alias af='apt-file'
+alias dl='dpkg -l'
+# alias dL='dpkg -L'
+[[ -x /usr/bin/dlocate ]] && alias ds='dlocate -S' \
+                          || alias ds='dpkg -S'
+
+alias ucat='iconv -f utf8 -t gbk'
+alias gcat='iconv -t utf8 -f gbk'
+alias ulang='LANG=zh_CN.UTF-8'
+alias glang='LANG=zh_CN.GBK'
+
+if [[ $LANG == "zh_CN.UTF-8" ]]; then
+        alias m='LANG=zh_CN.GBK man'
+        alias i='LANG=zh_CN.GBK pinfo'
+        alias luit='LANG=zh_CN.GBK luit -encoding GBK'
+        alias xmms='LANG=zh_CN.GBK xmms'
+else
+        alias m='man'
+        alias i='pinfo'
+fi
+
+
+alias ls='/bin/ls -h --color=auto --show-control-chars'
+alias sl='ls'
+alias la='ls -A'
+alias ll='ls -lrt --color=always'
+alias lla='ls -Alrt --color=always'
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+
+#alias xdvi='xdvi -s 5 -expert'
+alias pss='processes=`ps aux`; echo "$processes" | head -n1; echo "$processes" |grep'
+
+alias md='mkdir -p'
+alias rd=rmdir
+alias d='dirs -v'
+alias j='jobs -l'
+alias lo=locate
+
+# configure
+alias CO="./configure"
+alias CH="./configure --help"
+

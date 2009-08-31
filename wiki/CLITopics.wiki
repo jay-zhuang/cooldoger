@@ -1,0 +1,190 @@
+﻿#summary Some Linux CLI Topics from Web
+
+= Introduction =
+Here is some Linux CLI topics from Web
+
+= 1. Learn 10 good UNIX usage habits =
+
+== Introduction ==
+This topic come from IBM site: http://www.ibm.com/developerworks/aix/library/au-badunixhabits.html?S_TACT=105AGX20&S_CMP=EDU which contains 10 CLI usage tips.
+
+== a. Make directory trees in a single swipe ==
+use *_-p_* to define directory trees with one command:
+{{{
+~ $ mkdir -p tmp/a/b/c
+}}}
+Difining complex directory trees with one command:
+{{{
+~ $ mkdir -p project/{lib/ext,bin,src,doc/{html,info,pdf},demo/stat/a}
+}}}
+This one is very useful when you write shell files or makefiles.
+
+== b. Change the path; do not mode the archive ==
+{{{
+~ $ tar xvf -C tmp/a/b/c newarc.tar.gz
+}}}
+Making a habit of using *_-C_* is preferable to moving the archive file to where you want to unpack it.
+
+== c. Combine your commands with control operators ==
+{{{
+~ $ cd tmp/a/b/c && tar xvf ~/archive.tar
+}}}
+Second one is run only if the first command returns a zero (runs successfully).
+
+{{{
+~ $ cd tmp/a/b/c || mkdir -p tmp/a/b/c
+}}}
+Second one is run only if the first command returns non-zero (runs unsuccessfully).
+In my own view, this one is just useful when you write a shell script. You don't need to do consider all the result.
+
+== d. Quote variables with caution ==
+{{{
+~ $ ls tmp/
+a b
+~ $ VAR="tmp/*"
+~ $ echo $VAR
+tmp/a tmp/b
+~ $ echo "$VAR"
+tmp/*
+~ $ echo $VARa
+
+~ $ echo "$VARa"
+
+~ $ echo "${VAR}a"
+tmp/*a
+~ $ echo ${VAR}a
+tmp/a
+~ $
+}}}
+It's really confusional!
+
+== e. Use escape sequences to manage long input ==
+{{{
+~ $ cd tmp/a/b/c || \
+> mkdir -p tmp/a/b/c && \
+> tar xvf -C tmp/a/b/c ~/archive.tar
+}}}
+
+== f. Use xargs outside of find ==
+{{{
+~ $ find files path | xargs cmd
+}}}
+Use *_xargs_* when you need it.
+
+== g. Know when grep should do the counting -- and when it should step aside ==
+
+== h. Match certain fields in output, not just lines ==
+
+== i. Stop piping cats ==
+{{{
+~ $ time cat tmp/a/longfile.txt | grep and
+2811
+real    0m0.015s
+user    0m0.003s
+sys     0m0.013s
+~ $ time grep and tmp/a/longfile.txt
+2811
+real    0m0.010s
+user    0m0.006s
+sys     0m0.004s
+~ $ 
+}}}
+Pipe the result of *_cat_* is no very effective. Don't pipe too much output.
+
+= 2. Learn 10 more good UNIX usage habits =
+
+== Introduction ==
+This topic is from http://www.ibm.com/developerworks/aix/library/au-unixtips/index.html?S_TACT=105AGX20&S_CMP=EDU
+
+== a. Use file name completion ==
+This naturally support by *Bash*, just use *Tab* to complete the file name.
+
+== b. Use history expansion ==
+use !$ to retrieve the last file name used with a command
+{{{
+$ grep pickles this-is-a-long-lunch-menu-file.txt
+pastrami on rye with pickles and onions
+$ vi !$	
+}}}
+
+== c. Reuse previous arguments ==
+{{{
+~ $ ls a.txt b.txt
+a.txt b.txt
+}}}
+At that time !$ is *_b.txt_*
+!:0 is *_ls_*
+!:1 is *_a.txt_*
+!:2 is "_b.txt_*
+
+== d. Manage directory navigation with pushd and popd ==
+{{{
+$ pushd .
+~ ~
+$ pushd /etc
+/etc ~ ~
+$ pushd /var
+/var /etc ~ ~
+$ pushd /usr/local/bin
+/usr/local/bin /var /etc ~ ~
+$ dirs
+/usr/local/bin /var /etc ~ ~
+$ popd
+/var /etc ~ ~
+$ popd
+/etc ~ ~
+$ popd
+~ ~
+$ popd
+}}}
+Rotating the directory stack
+{{{
+$ dirs
+/usr/local/bin /var /etc ~ ~
+$ pushd +1
+/var /etc ~ ~ /usr/local/bin
+$ pushd -1
+~ /usr/local/bin /var /etc ~
+}}}
+
+== e. Find large files ==
+{{{
+$ find / -size +10000k -xdev
+}}}
+
+== f. Create temporary files without an editor ==
+{{{
+$ cat > my_temp_file.txt
+This is my temp file text
+^D
+$ cat my_temp_file.txt
+This is my temp file text
+}}}
+Quickly append to a file
+{{{
+$ cat >> my_temp_file.txt
+More text
+^D
+$ cat my_temp_file.txt
+This is my temp file text
+More text
+}}}
+
+== g. Use the curl command-line utility ==
+{{{
+$ curl -s http://www.srh.noaa.gov/data/ALY/RWRALY | grep BUFFALO
+}}}
+
+== h. Make the most of regular expressions ==
+
+== i. Determine the current user ==
+
+== j. Process data with awk ==
+
+= 3. UNIX tips: Productivity tips =
+
+== Introduction ==
+This topic also come from IBM developerworks: http://www.ibm.com/developerworks/aix/library/au-productivitytips.html?S_TACT=105AGX20&S_CMP=EDU
+
+== a. Review your daily habits ==
+

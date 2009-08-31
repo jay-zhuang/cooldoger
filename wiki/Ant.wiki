@@ -1,0 +1,18 @@
+#summary apache ant study
+#labels Study
+
+= Introduction =
+
+Apache Ant is a Java-based build tool. In theory, it is kind of like make, without make's wrinkles.
+
+= Installation =
+
+The latest version of the Ant is 1.7.1. The installation is very simply, download the binary code and install it, in the Linux, apt-get or yum would be fine. In Windows, just set the path and ANT_HOME environment variable.
+
+= Sample =
+
+
+
+= Reference =
+
+http://ant.apache.org/

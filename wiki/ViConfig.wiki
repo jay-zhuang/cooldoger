@@ -1,0 +1,8 @@
+#summary Vi Configuration
+
+= Introduction =
+
+= usage =
+
+= Code =
+http://cooldoger.googlecode.com/svn/dotfiles/.vimrc

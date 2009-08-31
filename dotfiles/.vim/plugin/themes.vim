@@ -1,0 +1,1 @@
+/usr/share/vim-scripts/plugin/themes.vim

@@ -1,0 +1,1 @@
+cmd_/home/jay/cooldoger/drivers/simple-module.ko := ld -r -m elf_x86_64 -T /usr/src/linux-3.5.3-1-ARCH/scripts/module-common.lds --build-id  -o /home/jay/cooldoger/drivers/simple-module.ko /home/jay/cooldoger/drivers/simple-module.o /home/jay/cooldoger/drivers/simple-module.mod.o

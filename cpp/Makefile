@@ -25,5 +25,8 @@ containerTest.o: containerTest.cpp
 algorithmTest.o: algorithmTest.cpp
 	$(CC) -c algorithmTest.cpp
 
+memException : memException.cpp
+	$(CC) memException.cpp -o memException
+
 clean:
 	rm -rf *.o main

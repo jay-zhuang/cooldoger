@@ -8,14 +8,14 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-    cout << "hello jay" << endl;
-    ccTest::bridgeTest();
-    cout << "=============================" << endl;
-    sharedPtrTest::test();
-    cout << "=============================" << endl;
-    containerTest::test();
-    cout << "=============================" << endl;
-    findKth::test();
+    //ccTest::bridgeTest();
+    //cout << "=============================" << endl;
+    //sharedPtrTest::test();
+    //cout << "=============================" << endl;
+    //containerTest::test();
+    //cout << "=============================" << endl;
+    //findKth::test();
+
     return 0;
 }
 

@@ -7,8 +7,8 @@ all: main
 debug: CC += -DDEBUG -g
 debug: main
 
-main: main.o ccTest.o sharedPtr.o containerTest.o algorithmTest.o
-	$(CC) main.o ccTest.o sharedPtr.o containerTest.o algorithmTest.o -o main
+main: main.o ccTest.o sharedPtr.o containerTest.o algorithmTest.o others.o
+	$(CC) main.o ccTest.o sharedPtr.o containerTest.o algorithmTest.o others.o -o main
 
 main.o: main.cpp
 	$(CC) -c main.cpp
@@ -25,8 +25,14 @@ containerTest.o: containerTest.cpp
 algorithmTest.o: algorithmTest.cpp
 	$(CC) -c algorithmTest.cpp
 
+others.o: others.cpp
+	$(CC) -c others.cpp
+
 memException : memException.cpp
 	$(CC) memException.cpp -o memException
 
 clean:
 	rm -rf *.o main
+
+run:
+	./main

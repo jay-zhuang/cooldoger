@@ -1,9 +1,11 @@
 #include <iostream>
+#include <string>
 #include "command.h"
+#include "adapter.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    commandTest::test();
+    adapterTest::test();
     return 0;
 }

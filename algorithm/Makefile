@@ -7,8 +7,8 @@ all: main
 debug: CC += -DDEBUG -g
 debug: main
 
-main: main.o retangleOverlap.o stlTest.o
-	$(CC) main.o retangleOverlap.o stlTest.o -o main
+main: main.o retangleOverlap.o stlTest.o missingNumber.o
+	$(CC) main.o retangleOverlap.o stlTest.o missingNumber.o -o main
 
 main.o: main.cpp
 	$(CC) -c main.cpp
@@ -22,5 +22,11 @@ coins.o: coins.cpp
 stlTest.o: stlTest.cpp
 	$(CC) -c stlTest.cpp
 
+missingNumber.o: missingNumber.cpp
+	$(CC) -c missingNumber.cpp
+
 clean:
 	rm -rf *.o main
+
+run:
+	./main

@@ -16,7 +16,12 @@ int main(int argc, char **argv) {
     //containerTest::test();
     //cout << "=============================" << endl;
     //findKth::test();
-    othersTest::test();
+    int i = 1;
+    do {
+        i++;
+        cout << i << endl;
+    } while (i < 10);
+    //othersTest::test();
     return 0;
 }
 

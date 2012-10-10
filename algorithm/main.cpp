@@ -3,10 +3,11 @@
 #include "retangleOverlap.h"
 #include "stlTest.h"
 #include "missingNumber.h"
+#include "isBST.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    missingNumberTest::test();
+    isBSTTest::test();
     return 0;
 }

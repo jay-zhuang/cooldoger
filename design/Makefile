@@ -7,8 +7,8 @@ all: main
 debug: CC += -DDEBUG -g
 debug: main
 
-main: main.o command.o adapter.o bridge.o
-	$(CC) main.o command.o adapter.o bridge.o -o main
+main: main.o command.o adapter.o bridge.o composite.o
+	$(CC) main.o command.o adapter.o bridge.o composite.o -o main
 
 main.o: main.cpp
 	$(CC) -c main.cpp
@@ -21,6 +21,9 @@ adapter.o: adapter.cpp
 
 bridge.o: bridge.cpp
 	$(CC) -c bridge.cpp
+
+composite.o: composite.cpp
+	$(CC) -c composite.cpp
 
 run:
 	./main

@@ -8,6 +8,26 @@
 
 using namespace std;
 
+class foo {
+public:
+    int value;
+};
+
+class bar {
+public:
+    foo* f_p;
+};
+
+class bar2 {
+public:
+    foo& f;
+};
+
+void test() {
+    cout << sizeof(bar) << endl;
+    cout << sizeof(bar2) << endl;
+}
+
 int main(int argc, char **argv) {
     //ccTest::bridgeTest();
     //cout << "=============================" << endl;
@@ -16,7 +36,8 @@ int main(int argc, char **argv) {
     //containerTest::test();
     //cout << "=============================" << endl;
     //findKth::test();
-    othersTest::test();
+    //othersTest::test();
+    test();
     return 0;
 }
 

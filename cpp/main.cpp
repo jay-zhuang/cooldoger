@@ -138,6 +138,30 @@ void exception_test() {
         cout << "catch the copytest exception. " << endl; 
     }
 }
+
+class node {
+public:
+    int data;
+    node *next;
+};
+
+void print_node(node *n) {
+    while (n) {
+        cout << n->data << endl;
+        n = n->next;
+    }
+}
+
+void node_test() {
+    node a;
+    node b;
+    a.data = 10;
+    b.data = 13;
+    a.next = &b;
+    b.next = NULL;
+    print_node(&a);
+}
+
 int main(int argc, char **argv) {
     //ccTest::bridgeTest();
     //cout << "=============================" << endl;
@@ -148,7 +172,8 @@ int main(int argc, char **argv) {
     //findKth::test();
     //othersTest::test();
     //test();
-    exception_test();
+    //exception_test();
+    node_test();
     return 0;
 }
 

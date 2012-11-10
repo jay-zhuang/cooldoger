@@ -7,8 +7,8 @@ all: main
 debug: CC += -DDEBUG -g
 debug: main
 
-main: main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o
-	$(CC) main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o -o main
+main: main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o
+	$(CC) main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o -o main
 
 main.o: main.cpp
 	$(CC) -c main.cpp
@@ -27,6 +27,9 @@ missingNumber.o: missingNumber.cpp
 
 isBST.o: isBST.cpp
 	$(CC) -c isBST.cpp
+
+arrayString.o: arrayString.cpp
+	$(CC) -c arrayString.cpp
 
 clean:
 	rm -rf *.o main

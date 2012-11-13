@@ -7,8 +7,8 @@ all: main
 debug: CC += -DDEBUG -g
 debug: main
 
-main: main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o treeGraph.o stackQueue.o bit.o
-	$(CC) main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o treeGraph.o stackQueue.o bit.o -o main
+main: main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o treeGraph.o stackQueue.o bit.o recursion.o
+	$(CC) main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o treeGraph.o stackQueue.o bit.o recursion.o -o main
 
 main.o: main.cpp
 	$(CC) -c main.cpp
@@ -39,6 +39,9 @@ stackQueue.o: stackQueue.cpp
 
 bit.o: bit.cpp
 	$(CC) -c bit.cpp
+
+recursion.o: recursion.cpp
+	$(CC) -c recursion.cpp
 
 clean:
 	rm -rf *.o main

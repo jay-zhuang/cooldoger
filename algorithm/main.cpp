@@ -8,6 +8,7 @@
 #include "treeGraph.h"
 #include "stackQueue.h"
 #include "bit.h"
+#include "recursion.h"
 
 using namespace std;
 
@@ -16,7 +17,8 @@ int main(int argc, char** argv) {
     //arrayStringTest t;
     //treeGraphTest t;
     //stackQueueTest t;
-    bitTest t;
+    //bitTest t;
+    recursionTest t;
     t.test();
     return 0;
 }

@@ -9,6 +9,7 @@
 #include "stackQueue.h"
 #include "bit.h"
 #include "recursion.h"
+#include "sortSearch.h"
 
 using namespace std;
 
@@ -18,7 +19,8 @@ int main(int argc, char** argv) {
     //treeGraphTest t;
     //stackQueueTest t;
     //bitTest t;
-    recursionTest t;
+    //recursionTest t;
+    sortSearchTest t;
     t.test();
     return 0;
 }

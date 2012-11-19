@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include "main.h"
 #include "retangleOverlap.h"
 #include "stlTest.h"
 #include "missingNumber.h"
@@ -14,6 +15,11 @@
 
 using namespace std;
 
+void ccTest::test() {
+    cout << "Test function is not implemented." << endl;
+    return;
+}
+
 int main(int argc, char** argv) {
     //isBSTTest::test();
     //arrayStringTest t;
@@ -22,7 +28,10 @@ int main(int argc, char** argv) {
     //bitTest t;
     //recursionTest t;
     //sortSearchTest t;
-    multiplicationTest t;
-    t.test();
+    //multiplicationTest t;
+    countingInversionsTest countingTest;
+    ccTest *t = &countingTest;
+
+    t->test();
     return 0;
 }

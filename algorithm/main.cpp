@@ -10,6 +10,7 @@
 #include "bit.h"
 #include "recursion.h"
 #include "sortSearch.h"
+#include "multiplication.h"
 
 using namespace std;
 
@@ -20,7 +21,8 @@ int main(int argc, char** argv) {
     //stackQueueTest t;
     //bitTest t;
     //recursionTest t;
-    sortSearchTest t;
+    //sortSearchTest t;
+    multiplicationTest t;
     t.test();
     return 0;
 }

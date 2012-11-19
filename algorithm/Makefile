@@ -1,57 +1,21 @@
 CC=g++
-SRCDIR=.
-BINDIR=bin
+
+CPP_FILES := $(wildcard *.cpp)
+OBJ_FILES := $(notdir $(CPP_FILES:.cpp=.o))
 
 all: main
-
 debug: CC += -DDEBUG -g
 debug: main
 
-main: main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o treeGraph.o stackQueue.o bit.o recursion.o sortSearch.o multiplication.o
-	$(CC) main.o retangleOverlap.o stlTest.o missingNumber.o isBST.o arrayString.o treeGraph.o stackQueue.o bit.o recursion.o sortSearch.o multiplication.o -o main
 
-main.o: main.cpp
-	$(CC) -c main.cpp
+main: $(OBJ_FILES)
+	$(CC) -o $@ $^
 
-retangleOverlap.o: retangleOverlap.cpp
-	$(CC) -c retangleOverlap.cpp
-
-coins.o: coins.cpp
-	$(CC) -c coins.cpp
-
-stlTest.o: stlTest.cpp
-	$(CC) -c stlTest.cpp
-
-missingNumber.o: missingNumber.cpp
-	$(CC) -c missingNumber.cpp
-
-isBST.o: isBST.cpp
-	$(CC) -c isBST.cpp
-
-arrayString.o: arrayString.cpp
-	$(CC) -c arrayString.cpp
-
-treeGraph.o: treeGraph.cpp
-	$(CC) -c treeGraph.cpp
-
-stackQueue.o: stackQueue.cpp
-	$(CC) -c stackQueue.cpp
-
-bit.o: bit.cpp
-	$(CC) -c bit.cpp
-
-recursion.o: recursion.cpp
-	$(CC) -c recursion.cpp
-
-sortSearch.o: sortSearch.cpp
-	$(CC) -c sortSearch.cpp
-
-multiplication.o: multiplication.cpp
-	$(CC) -c multiplication.cpp
-
+%.o: %.cpp
+	$(CC) -c -o $@ $<
 
 clean:
-	rm -rf *.o main
+	rm -rf $(OBJ_FILES) main
 
 run:
 	./main

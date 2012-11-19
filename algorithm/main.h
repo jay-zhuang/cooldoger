@@ -4,4 +4,6 @@ public:
 };
 
 class countingInversionsTest : public ccTest {
+public:
+    virtual void test();
 };

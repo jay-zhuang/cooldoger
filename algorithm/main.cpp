@@ -30,7 +30,8 @@ int main(int argc, char** argv) {
     //sortSearchTest t;
     //multiplicationTest t;
     countingInversionsTest countingTest;
-    ccTest *t = &countingTest;
+    closestPairTest closestTest;
+    ccTest *t = &closestTest;
 
     t->test();
     return 0;

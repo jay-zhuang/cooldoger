@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -std=c++11
 
 CPP_FILES := $(wildcard *.cpp)
 OBJ_FILES := $(notdir $(CPP_FILES:.cpp=.o))
@@ -18,4 +18,4 @@ clean:
 	rm -rf $(OBJ_FILES) lookup
 
 run:
-	cat queries.txt | lookup
+	cat queries.txt | ./lookup

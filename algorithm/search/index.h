@@ -6,6 +6,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
 #include <set>
 
 class node {

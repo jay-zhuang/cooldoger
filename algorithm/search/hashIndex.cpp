@@ -49,7 +49,7 @@ void hashIndex::lookup(vector<string> input) {
     tgt = &res2;
 
     for (vector<ResVal>::iterator i = results.begin() + 1; i != results.end(); i++) {
-        for (unordered_set<node, nodeHash, nodeEqual>::iterator j = src.begin(); j != src.end(); j++) {
+        for (unordered_set<node, nodeHash, nodeEqual>::iterator j = src->begin(); j != src->end(); j++) {
             
         }
     }
@@ -57,16 +57,16 @@ void hashIndex::lookup(vector<string> input) {
 
 }
 
-void hashIndex::insert(const string& word, const node& n) {
-    unordered_map<string, unordered_set<node, nodeHash, nodeEqual>* >::iterator list =
-        this->data.find(word);
+void hashIndex::insert(const string& word, long idx) {
+    // unordered_map<string, unordered_set<node, nodeHash, nodeEqual>* >::iterator list =
+    //     this->data.find(word);
 
-    if (list == this->data.end()) {
-        unordered_set<node, nodeHash, nodeEqual> *t = new unordered_set<node, nodeHash, nodeEqual>();
-        t->insert(n);
-        this->data[word] = t;
-    } else {
-        list->second->insert(n);
-    }
+    // if (list == this->data.end()) {
+    //     unordered_set<node, nodeHash, nodeEqual> *t = new unordered_set<node, nodeHash, nodeEqual>();
+    //     t->insert(*nodePtr);
+    //     this->data[word] = t;
+    // } else {
+    //     list->second->insert(n);
+    // }
 }
 

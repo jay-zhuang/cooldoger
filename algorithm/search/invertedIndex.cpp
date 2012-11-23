@@ -8,15 +8,15 @@ invertedIndex::invertedIndex(string fileName) : searchIndex(fileName) {
 }
 
 invertedIndex::~invertedIndex() {
-    for (unordered_map<std::string, std::set<node, posCmp>* >::iterator i = this->data.begin();
+    for (unordered_map<string, vector<long>* >::iterator i = this->data.begin();
         i != this->data.end(); i++) {
         delete i->second;
     }
 }
 
 struct ResIt{
-    set<node, posCmp>::iterator it;
-    set<node, posCmp>::iterator end;
+    vector<long>::iterator it;
+    vector<long>::iterator end;
 };
 
 void invertedIndex::lookup(vector<string> input) {
@@ -26,7 +26,7 @@ void invertedIndex::lookup(vector<string> input) {
 
 
     for (vector<string>::iterator i = input.begin(); i != input.end(); i++) {
-        unordered_map<string, set<node, posCmp>* >::iterator list =
+        unordered_map<string, vector<long>* >::iterator list =
             this->data.find(*i);
 
         if (list == this->data.end()) {
@@ -38,26 +38,26 @@ void invertedIndex::lookup(vector<string> input) {
         }
     }
 
-    set<node, valCmp> res;
+    vector<long> res;
     long max = 0;
     int cnt = 0;
 
     for (vector<ResIt>::iterator i = results.begin();;i++) {
         if (i == results.end()) i = results.begin();
 
-        while (i->it != i->end && i->it->pos < max) (i->it)++;
+        while (i->it != i->end && this->store[*(i->it)].pos < max) (i->it)++;
 
         if (i->it == i->end) {
             break;
-        } else if (i->it->pos > max) {
-            max = i->it->pos;
+        } else if (this->store[*(i->it)].pos > max) {
+            max = this->store[*(i->it)].pos;
             cnt = 1;
-        } else if (i->it->pos == max) {
+        } else if (this->store[*(i->it)].pos == max) {
             cnt++;
         }
 
         if (cnt == len) { // found
-            res.insert(*(i->it));
+            res.push_back(*(i->it));
         }
         (i->it)++;
     }
@@ -65,16 +65,16 @@ void invertedIndex::lookup(vector<string> input) {
     this->printResult(res);
 }
 
-void invertedIndex::insert(const string& word, const node& n) {
-    unordered_map<string, set<node, posCmp>* >::iterator list =
+void invertedIndex::insert(const string& word, long idx) {
+    unordered_map<string, vector<long>*>::iterator list =
         this->data.find(word);
 
     if (list == this->data.end()) {
-        set<node, posCmp> *t = new set<node, posCmp>();
-        t->insert(n);
+        vector<long> *t = new vector<long>();
+        t->push_back(idx);
         this->data[word] = t;
     } else {
-        list->second->insert(n);
+        list->second->push_back(idx);
     }
 
 }

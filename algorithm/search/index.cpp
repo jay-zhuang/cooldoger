@@ -35,9 +35,11 @@ void searchIndex::buildSearchIndex() {
 
     int i = 0;
     long nextPos = 0;
+    long idx = 0;
     string str;
 
     while(getline(this->dataFile, line)) {
+
         stringstream lineS(line);
         i = 0;
         nextPos = this->dataFile.tellg();
@@ -55,14 +57,40 @@ void searchIndex::buildSearchIndex() {
 
         while(getline(strS, word, ' ')) {
             if (word.size() > 0) {
-                this->insert(word, n);
+                this->insert(word, idx);
             }
         }
 
+        this->store.push_back(n);
+        idx++;
         n.pos = nextPos;
     }
 
     this->dataFile.clear();
+}
+
+void searchIndex::printNode(const node& nd, int n) {
+    int i = 0;
+    string line;
+    string field;
+    string str;
+    long id;
+
+    this->dataFile.clear();
+    this->dataFile.seekg(nd.pos, ios::beg);
+    getline(this->dataFile, line);
+
+    stringstream lineS(line);
+    while(getline(lineS, field, '\t')) {
+        i++;
+        if (i == 1) {
+            id = atol(field.c_str());
+        } else if (i == 2) {
+            str = field;
+        }
+    }
+
+    cout << n << ")\t" << id << "\t" << nd.val << "\t" << str << endl;
 }
 
 void searchIndex::printResult(set<node, valCmp> res) {
@@ -94,6 +122,18 @@ void searchIndex::printResult(set<node, valCmp> res) {
     }
 }
 
+
+void searchIndex::printResult(vector<long> res) {
+    int i = 1;
+    idxValCmp myIdxValCmp(&(this->store));
+
+    sort(res.begin(), res.end(), myIdxValCmp);
+
+    for (vector<long>::iterator it = res.begin(); it != res.end(); it++, i++) {
+        this->printNode(this->store[*it], i);
+    }
+}
+
 void searchIndex::buildIndex() {
     this->buildSearchIndex();
 }
@@ -116,4 +156,12 @@ size_t nodeHash::operator()(const node& n1) const {
 
 bool nodeEqual::operator()(const node& n1, const node& n2) const {
     return n1.pos == n2.pos;
+}
+
+idxValCmp::idxValCmp(std::vector<node> *d) {
+    this->storePtr = d;
+}
+
+bool idxValCmp::operator()(long idx1, long idx2) {
+    return (*this->storePtr)[idx1].val >= (*this->storePtr)[idx2].val;
 }

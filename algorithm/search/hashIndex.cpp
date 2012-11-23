@@ -1,4 +1,5 @@
 #include "index.h"
+#include <pthread.h>
 
 using namespace std;
 
@@ -22,6 +23,46 @@ struct ResSizeCmp {
     }
 } resSizeCmp;
 
+struct thData {
+    pthread_spinlock_t itSpin;
+    pthread_spinlock_t resSpin;
+    unordered_set<long>::iterator *itPtr;
+    unordered_set<long>::iterator end;
+    vector<ResVal> *resultsPtr;
+    vector<long> *resPtr;
+};
+
+void *merge(void *ptr) {
+    thData *d = (thData *)ptr;
+    long val = 0;
+    while (true) {
+        pthread_spin_lock(&(d->itSpin));
+        if (*(d->itPtr) == d->end) {
+            pthread_spin_unlock(&(d->itSpin));
+            return NULL;
+        }
+        val = *(*(d->itPtr));
+        (*(d->itPtr))++;
+        pthread_spin_unlock(&(d->itSpin));
+
+        bool found = true;
+        for (vector<ResVal>::iterator it = d->resultsPtr->begin() + 1;
+            it != d->resultsPtr->end(); it++) {
+            if (it->list->find(val) == it->list->end()) {
+                found = false;
+                break;
+            }
+        }
+
+        if (found) {
+            pthread_spin_lock(&(d->resSpin));
+            d->resPtr->push_back(val);
+            pthread_spin_unlock(&(d->resSpin));
+        }
+    }
+    return NULL;
+}
+
 void hashIndex::lookup(vector<string> input) {
     int len = input.size();
     vector<ResVal> results(len);
@@ -42,25 +83,54 @@ void hashIndex::lookup(vector<string> input) {
 
     sort(results.begin(), results.end(), resSizeCmp);
 
-    vector<long> res;
-    bool found = false;
-
-    for (unordered_set<long>::iterator it = results[0].list->begin();
-        it != results[0].list->end(); it++) {
-        found = true;
-        for (vector<ResVal>::iterator resIt = results.begin() + 1; resIt != results.end(); resIt++) {
-            if (resIt->list->find(*it) == resIt->list->end()) {
-                found = false;
-                break;
-            }
-        }
-
-        if (found) {
-            res.push_back(*it);
-        }
+    if (len == 1) {
+        vector<long> res(results[0].list->begin(), results[0].list->end());
+        this->printResult(res);
+        return;
     }
 
-    this->printResult(res);
+    vector<long> resl;
+
+    int thNum = this->getCPUCoreNum();
+    vector<pthread_t> ths(thNum);
+    thData tData;
+
+    pthread_spin_init(&(tData.itSpin), 0);
+    pthread_spin_init(&(tData.resSpin), 0);
+    unordered_set<long>::iterator it = results[0].list->begin();
+    tData.itPtr = &it;
+    tData.end = results[0].list->end();
+    tData.resultsPtr = &results;
+    tData.resPtr = &resl;
+
+    for (int i = 0; i < thNum; i++) {
+        pthread_create(&(ths[i]), NULL, merge, &tData);
+    }
+
+    for (int i = 0; i < thNum; i++) {
+        pthread_join(ths[i], NULL);
+    }
+
+    pthread_spin_destroy(&(tData.itSpin));
+    pthread_spin_destroy(&(tData.resSpin));
+    // bool found = false;
+
+    // for (unordered_set<long>::iterator it = results[0].list->begin();
+    //     it != results[0].list->end(); it++) {
+    //     found = true;
+    //     for (vector<ResVal>::iterator resIt = results.begin() + 1; resIt != results.end(); resIt++) {
+    //         if (resIt->list->find(*it) == resIt->list->end()) {
+    //             found = false;
+    //             break;
+    //         }
+    //     }
+
+    //     if (found) {
+    //         res.push_back(*it);
+    //     }
+    // }
+
+    this->printResult(resl);
 }
 
 void hashIndex::insert(const string& word, long idx) {

@@ -185,9 +185,10 @@ int main(int argc, char **argv) {
     //test();
     //exception_test();
     //node_test();
-    stlMemTest stlT;
 
-    ccTest *t = &stlT;
+    threadTest thTest;
+
+    ccTest *t = &thTest;
     t->test();
     f2i cc;
     cc.hi();

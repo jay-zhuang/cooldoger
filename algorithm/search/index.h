@@ -45,7 +45,8 @@ protected:
     void printResult(std::set<node, valCmp> res);
     void printResult(std::vector<long> res);
     void buildSearchIndex();
-
+    int getCPUCoreNum();
+    
 public:
     searchIndex(std::string fileName);
     virtual void buildIndex();

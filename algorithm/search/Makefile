@@ -1,4 +1,4 @@
-CC=g++ -std=c++11
+CC=g++ -std=c++11 -pthread
 
 CPP_FILES := $(wildcard *.cpp)
 OBJ_FILES := $(notdir $(CPP_FILES:.cpp=.o))

@@ -138,6 +138,10 @@ void searchIndex::buildIndex() {
     this->buildSearchIndex();
 }
 
+int searchIndex::getCPUCoreNum() {
+    return 2;
+}
+
 searchIndex::~searchIndex() {
     this->dataFile.close();
 }

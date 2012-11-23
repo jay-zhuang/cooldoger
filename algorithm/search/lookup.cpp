@@ -10,13 +10,13 @@ searchIndex *algorithmBuilder(int argc, char** argv) {
     if (argc == 3) fileName = argv[2];
 
     if (argc == 1) {
-        ret = new invertedIndex(fileName);
+        ret = new hashIndex(fileName);
     } else {
         if (strcmp(argv[1], "inverted") == 0) {
             ret = new invertedIndex(fileName);
         } else if (strcmp(argv[1], "hash") == 0) {
             cout << "hashing" << endl;
-            ret = new invertedIndex(fileName);
+            ret = new hashIndex(fileName);
         }
     }
 

@@ -23,6 +23,14 @@ struct valCmp {
     bool operator()(const node& n1, const node& n2);
 };
 
+struct nodeHash {
+    std::size_t operator()(const node& n1) const;
+};
+
+struct nodeEqual {
+    bool operator()(const node& n1, const node& n2) const;
+};
+
 class searchIndex {
 private:
     virtual void lookup(std::vector<std::string> input) = 0;
@@ -53,7 +61,7 @@ public:
 
 class hashIndex : public searchIndex {
 private:
-    std::unordered_map<std::string, std::unordered_set<node>* > data;
+    std::unordered_map<std::string, std::unordered_set<node, nodeHash, nodeEqual>* > data;
     virtual void lookup(std::vector<std::string> input);
     virtual void insert(const std::string& word, const node& n);
 

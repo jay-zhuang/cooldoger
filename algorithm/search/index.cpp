@@ -109,3 +109,11 @@ bool posCmp::operator()(const node& n1, const node& n2) {
 bool valCmp::operator()(const node& n1, const node& n2) {
     return n1.val >= n2.val;
 }
+
+size_t nodeHash::operator()(const node& n1) const {
+    return std::hash<long>()(n1.pos);
+}
+
+bool nodeEqual::operator()(const node& n1, const node& n2) const {
+    return n1.pos == n2.pos;
+}

@@ -65,7 +65,7 @@ public:
 
 class hashIndex : public searchIndex {
 private:
-    std::unordered_map<std::string, std::unordered_set<node, nodeHash, nodeEqual>* > data;
+    std::unordered_map<std::string, std::unordered_set<long>* > data;
     virtual void lookup(std::vector<std::string> input);
     virtual void insert(const std::string& word, long idx);
 

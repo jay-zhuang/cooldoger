@@ -18,7 +18,7 @@ clean:
 	rm -rf $(OBJ_FILES) lookup
 
 run:
-	cat queries.txt | ./lookup inverted
+	cat queries.txt | ./lookup hash
 
 test:
 	python2 searchTest.py

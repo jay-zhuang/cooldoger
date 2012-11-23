@@ -5,14 +5,14 @@ using namespace std;
 hashIndex::hashIndex(string fileName) : searchIndex(fileName) {}
 
 hashIndex::~hashIndex() {
-    for (unordered_map<string, unordered_set<node, nodeHash, nodeEqual>* >::iterator i = this->data.begin();
+    for (unordered_map<string, unordered_set<long>* >::iterator i = this->data.begin();
         i != this->data.end(); i++) {
         delete i->second;
     }
 }
 
 struct ResVal {
-    unordered_set<node, nodeHash, nodeEqual> *list;
+    unordered_set<long> *list;
     long size;
 };
 
@@ -28,7 +28,7 @@ void hashIndex::lookup(vector<string> input) {
     int j = 0;
 
     for (vector<string>::iterator i = input.begin(); i != input.end(); i++) {
-        unordered_map<string, unordered_set<node, nodeHash, nodeEqual>* >::iterator list =
+        unordered_map<string, unordered_set<long>* >::iterator list =
             this->data.find(*i);
 
         if (list == this->data.end()) {
@@ -42,31 +42,37 @@ void hashIndex::lookup(vector<string> input) {
 
     sort(results.begin(), results.end(), resSizeCmp);
 
-    unordered_set<node, nodeHash, nodeEqual> res1 = *(results[0].list);
-    unordered_set<node, nodeHash, nodeEqual> res2(res1.size());
-    unordered_set<node, nodeHash, nodeEqual> *src, *tgt, *tmp;
-    src = &res1;
-    tgt = &res2;
+    vector<long> res;
+    bool found = false;
 
-    for (vector<ResVal>::iterator i = results.begin() + 1; i != results.end(); i++) {
-        for (unordered_set<node, nodeHash, nodeEqual>::iterator j = src->begin(); j != src->end(); j++) {
-            
+    for (unordered_set<long>::iterator it = results[0].list->begin();
+        it != results[0].list->end(); it++) {
+        found = true;
+        for (vector<ResVal>::iterator resIt = results.begin() + 1; resIt != results.end(); resIt++) {
+            if (resIt->list->find(*it) == resIt->list->end()) {
+                found = false;
+                break;
+            }
+        }
+
+        if (found) {
+            res.push_back(*it);
         }
     }
 
-
+    this->printResult(res);
 }
 
 void hashIndex::insert(const string& word, long idx) {
-    // unordered_map<string, unordered_set<node, nodeHash, nodeEqual>* >::iterator list =
-    //     this->data.find(word);
+    unordered_map<string, unordered_set<long>* >::iterator list =
+        this->data.find(word);
 
-    // if (list == this->data.end()) {
-    //     unordered_set<node, nodeHash, nodeEqual> *t = new unordered_set<node, nodeHash, nodeEqual>();
-    //     t->insert(*nodePtr);
-    //     this->data[word] = t;
-    // } else {
-    //     list->second->insert(n);
-    // }
+    if (list == this->data.end()) {
+        unordered_set<long> *t = new unordered_set<long>();
+        t->insert(idx);
+        this->data[word] = t;
+    } else {
+        list->second->insert(idx);
+    }
 }
 

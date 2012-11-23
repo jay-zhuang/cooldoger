@@ -15,7 +15,6 @@ searchIndex *algorithmBuilder(int argc, char** argv) {
         if (strcmp(argv[1], "inverted") == 0) {
             ret = new invertedIndex(fileName);
         } else if (strcmp(argv[1], "hash") == 0) {
-            cout << "hashing" << endl;
             ret = new hashIndex(fileName);
         }
     }

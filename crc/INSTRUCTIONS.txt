@@ -1,0 +1,46 @@
+INSTRUCTIONS
+
+Please write a C program which reads files and computes crc32 on them in
+parallel using pthreads.
+
+You should use the crc32_raw() function provided (contained in crc32.h and
+crc32.c) to compute the CRC on each file. This function requires no
+modification and should be used as-is.
+
+The list of filenames comes from stdin. DO NOT read the list of
+filenames from args!
+
+Print out the filenames with CRCs on stdout.
+
+Set a limit for maximum concurrent threads, but no limits on the number or
+size of the files.  Your code should use only POSIX interfaces and be as
+portable as possible.
+
+
+EXAMPLES
+
+A simple example where the user manually types in the files might look like:
+
+$ ./parallel_crc32
+/bin/sh
+/bin/sh: d522206b
+/bin/bash
+/bin/bash: f01ef8bc
+/bin/ksh
+/bin/ksh: c22065f3
+^D
+$
+
+An easy way to test a lot of files is to 'ls' a system directory, such as
+'/usr/bin', saving it into an input file for the program:
+
+$ for f in `/bin/ls -1 /usr/bin`; do
+for> print /usr/bin/$f
+for> done > ./file_list
+$ ./parallel_crc32 < file_list
+/usr/bin/2to3: 9d18ec5
+/usr/bin/GetFileInfo: e9d99e83
+/usr/bin/2to32.6: 38732ed
+/usr/bin/CpMac: a78ee3fb
+...
+

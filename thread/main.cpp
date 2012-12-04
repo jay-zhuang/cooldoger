@@ -9,8 +9,10 @@ void ccTest::test() {
 
 int main(int argc, char** argv) {
     producerConsumerTest pcTest;
+    threadTest tTest;
 
     ccTest *t = &pcTest;
+    //t = &tTest;
     t->test();
     return 0;
 }

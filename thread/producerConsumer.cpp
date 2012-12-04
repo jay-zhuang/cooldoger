@@ -130,13 +130,52 @@ class pcArrayCond : public producerConsumer {
 private:
     int data[MAX];
     int count;
+    pthread_cond_t cdFull;
+    pthread_cond_t cdEmpty;
+    pthread_mutex_t m;
+
+public:
+    virtual void add(int a) {
+        pthread_mutex_lock(&m);
+        while (this->count == MAX) {
+            pthread_cond_wait(&cdFull, &m);
+        }
+        this->data[this->count++] = a;
+        pthread_cond_signal(&cdEmpty);
+        pthread_mutex_unlock(&m);
+    }
+
+    virtual int remove() {
+        int ret = 0;
+        pthread_mutex_lock(&m);
+        while (this->count == 0) {
+            pthread_cond_wait(&cdEmpty, &m);
+        }
+        ret = this->data[--(this->count)];
+        pthread_cond_signal(&cdFull);
+        pthread_mutex_unlock(&m);
+        return ret;
+    }
+
+    pcArrayCond() {
+        pthread_mutex_init(&(this->m), NULL);
+        pthread_cond_init(&(this->cdFull), NULL);
+        pthread_cond_init(&(this->cdEmpty), NULL);
+        this->count = 0;
+    }
+
+    virtual ~pcArrayCond() {
+        pthread_mutex_destroy(&(this->m));
+        pthread_cond_destroy(&(this->cdFull));
+        pthread_cond_destroy(&(this->cdEmpty));
+    }
 };
 
 void *producer(void *a) {
     producerConsumer *d = (producerConsumer *)a;
     static int i = 0;
     while(true) {
-        cout << "adding :";
+        cout << "++++ adding :";
         cout << i << endl;
         d->add(i++);
         usleep(100000);
@@ -146,7 +185,7 @@ void *producer(void *a) {
 void *consumer(void *a) {
     producerConsumer *d = (producerConsumer *)a;
     while(true) {
-        cout << "removing :";
+        cout << "  ---- removing :";
         cout << d->remove() << endl;
         usleep(300000);
     }
@@ -156,9 +195,10 @@ void producerConsumerTest::test() {
     pthread_t c, p;
     pcArray a;
     pcArraySem b;
+    pcArrayCond d;
 
-    pthread_create(&c, NULL, consumer, (void *)(&b));
-    pthread_create(&p, NULL, producer, (void *)(&b));
+    pthread_create(&c, NULL, consumer, (void *)(&d));
+    pthread_create(&p, NULL, producer, (void *)(&d));
 
     void *status;
     int rc = pthread_join(c, &status);

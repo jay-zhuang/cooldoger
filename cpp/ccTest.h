@@ -1,4 +1,4 @@
-class ccTest {
+class ccTest2 {
 public:
     static void bridgeTest();
 };

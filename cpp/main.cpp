@@ -5,6 +5,7 @@
 #include "containerTest.h"
 #include "algorithmTest.h"
 #include "others.h"
+#include "main.h"
 
 using namespace std;
 

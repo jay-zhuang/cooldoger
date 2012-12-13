@@ -34,7 +34,7 @@ void triangle::doDraw() {
     cout << "triangle::doDraw()" << endl;
 }
 
-void ccTest::bridgeTest() {
+void ccTest2::bridgeTest() {
     vector<sharp *>array;
 
     array.push_back(new rectangle());

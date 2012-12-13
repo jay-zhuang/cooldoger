@@ -150,9 +150,3 @@ void vectorTest() {
     }
 }
 
-
-int main(int argc, char **argv) {
-    //myStringTest();
-    vectorTest();
-    return 0;
-}

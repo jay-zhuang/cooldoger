@@ -16,21 +16,3 @@ void throwException() {
     throw "hihihi";
 }
 
-int main(int argc, char** argv) {
-    try {
-        throwException();
-    }
-    catch (string *s) {
-        cout << "dddd" << endl;
-    }
-    catch (const char* s) {
-        cout << "string" << endl;
-    }
-    catch (exception& e) {
-        cout << "exception" << endl;
-    }
-    catch (...) {
-        cout << "other exception" << endl;
-    }
-    return 0;
-}

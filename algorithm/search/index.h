@@ -27,6 +27,7 @@ private:
 protected:
     std::string fileName;
     std::ifstream dataFile;
+    void printResult(std::set<node, valCmp> res);
 
 public:
     searchIndex(std::string fileName);

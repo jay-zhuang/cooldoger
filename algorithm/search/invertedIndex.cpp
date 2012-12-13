@@ -4,15 +4,17 @@
 using namespace std;
 
 invertedIndex::invertedIndex(string fileName) : searchIndex(fileName) {
-    cout << "building inverted index: " << fileName << endl;
+
 }
 
 invertedIndex::~invertedIndex() {
-    cout << "destorying inverted index" << endl;
+    for (unordered_map<std::string, std::set<node, posCmp>* >::iterator i = this->data.begin();
+        i != this->data.end(); i++) {
+        delete i->second;
+    }
 }
 
 void invertedIndex::buildIndex() {
-    cout << "building index ........" << this->fileName << endl;
     if (!this->dataFile) throw "File not found.";
 
     string line;
@@ -50,29 +52,61 @@ void invertedIndex::buildIndex() {
             }
         }
 
-        //cout << pos << "--" << val << "->" << ": " << str << endl;
-
         n.pos = nextPos;
     }
 
     this->dataFile.clear();
-    //this->dataFile.seekg(113, ios::beg);
 }
 
+struct ResIt{
+    set<node, posCmp>::iterator it;
+    set<node, posCmp>::iterator end;
+};
+
 void invertedIndex::lookup(vector<string> input) {
+    int len = input.size();
+    vector<ResIt> results(len);
+    int j = 0;
+
+
     for (vector<string>::iterator i = input.begin(); i != input.end(); i++) {
-        cout << "lookup " << *i << endl;
         unordered_map<string, set<node, posCmp>* >::iterator list =
             this->data.find(*i);
 
         if (list == this->data.end()) {
-            cout << "not found" << endl;
+            return;
         } else {
-            for (set<node, posCmp>::iterator i = list->second->begin(); i != list->second->end(); i++) {
-                cout << "  " << (*i).val << endl;
-            }
+            results[j].it = list->second->begin();
+            results[j].end = list->second->end();
+            j++;
         }
     }
+
+    set<node, valCmp> res;
+    long max = 0;
+    int cnt = 0;
+
+    for (vector<ResIt>::iterator i = results.begin();;i++) {
+        if (i == results.end()) i = results.begin();
+
+        while (i->it != i->end && i->it->pos < max) (i->it)++;
+
+        if (i->it == i->end) {
+            break;
+        } else if (i->it->pos > max) {
+            max = i->it->pos;
+            cnt = 1;
+        } else if (i->it->pos == max) {
+            cnt++;
+        }
+
+        if (cnt == len) { // found
+            res.insert(*(i->it));
+        }
+        (i->it)++;
+    }
+
+    this->printResult(res);
 }
 
 void invertedIndex::insert(const string& word, const node& n) {

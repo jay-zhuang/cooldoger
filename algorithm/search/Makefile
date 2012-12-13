@@ -19,3 +19,6 @@ clean:
 
 run:
 	cat queries.txt | ./lookup
+
+test:
+	python2 searchTest.py

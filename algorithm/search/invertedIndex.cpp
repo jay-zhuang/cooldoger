@@ -14,50 +14,6 @@ invertedIndex::~invertedIndex() {
     }
 }
 
-void invertedIndex::buildIndex() {
-    if (!this->dataFile) throw "File not found.";
-
-    string line;
-    string field;
-    string word;
-
-    node n;
-
-    n.pos = 0;
-    n.val = 0;
-
-    int i = 0;
-    long nextPos = 0;
-    string str;
-
-    while(getline(this->dataFile, line)) {
-        stringstream lineS(line);
-        i = 0;
-        nextPos = this->dataFile.tellg();
-
-        while(getline(lineS, field, '\t')) {
-            i++;
-            if (i == 2) {
-                str = field;
-            } else if (i == 3) {
-                n.val = atoi(field.c_str());
-            }
-        }
-
-        stringstream strS(str);
-
-        while(getline(strS, word, ' ')) {
-            if (word.size() > 0) {
-                this->insert(word, n);
-            }
-        }
-
-        n.pos = nextPos;
-    }
-
-    this->dataFile.clear();
-}
-
 struct ResIt{
     set<node, posCmp>::iterator it;
     set<node, posCmp>::iterator end;

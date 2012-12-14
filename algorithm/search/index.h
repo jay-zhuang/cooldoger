@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <unordered_map>
+#include <unordered_set>
 #include <set>
 
 class node {
@@ -24,14 +25,17 @@ struct valCmp {
 class searchIndex {
 private:
     virtual void lookup(std::vector<std::string> input) = 0;
+    virtual void insert(const std::string& word, const node& n) = 0;
+
 protected:
     std::string fileName;
     std::ifstream dataFile;
     void printResult(std::set<node, valCmp> res);
+    void buildSearchIndex();
 
 public:
     searchIndex(std::string fileName);
-    virtual void buildIndex() = 0;
+    virtual void buildIndex();
     void search(std::string line);
     virtual ~searchIndex();
 };
@@ -40,10 +44,20 @@ class invertedIndex : public searchIndex {
 private:
     std::unordered_map<std::string, std::set<node, posCmp>* > data;
     virtual void lookup(std::vector<std::string> input);
-    void insert(const std::string& word, const node& n);
+    virtual void insert(const std::string& word, const node& n);
 public:
     invertedIndex(std::string fileName);
-    virtual void buildIndex();   
     virtual ~invertedIndex();
+};
+
+class hashIndex : public searchIndex {
+private:
+    std::unordered_map<std::string, std::unordered_set<node>* > data;
+    virtual void lookup(std::vector<std::string> input);
+    virtual void insert(const std::string& word, const node& n);
+
+public:
+    hashIndex(std::string fileName);
+    virtual ~hashIndex();
 };
 

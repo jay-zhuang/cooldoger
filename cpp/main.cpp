@@ -163,6 +163,16 @@ void node_test() {
     print_node(&a);
 }
 
+class f1i {
+public:
+    virtual void hi() {
+        cout << "hi" << endl;
+    }
+};
+
+class f2i: public f1i {
+};
+
 int main(int argc, char **argv) {
     //ccTest::bridgeTest();
     //cout << "=============================" << endl;
@@ -174,7 +184,13 @@ int main(int argc, char **argv) {
     //othersTest::test();
     //test();
     //exception_test();
-    node_test();
+    //node_test();
+    stlMemTest stlT;
+
+    ccTest *t = &stlT;
+    t->test();
+    f2i cc;
+    cc.hi();
     return 0;
 }
 

@@ -32,18 +32,18 @@ char input_end = false;
 pthread_mutex_t input_m;
 pthread_mutex_t output_m;
 
-char get_stdin_input(char *file_name) {
-    int n;
+int get_stdin_input(char *file_name) {
+
     if (input_end == 1) return false;
 
-    n = read(0, file_name, BUFSIZ);
-
-    if (n < 1) {
+    if(fgets(file_name, BUFSIZ, stdin) == NULL) {
         input_end = true;
         return false;
     }
 
-    file_name[n-1] = '\0'; // remove the new line in string
+    size_t n = strlen(file_name);
+    if (n > 0) file_name[n-1] = '\0';  // remove the new line in string
+
     return true;
 }
 
@@ -56,22 +56,27 @@ void *crc_fun(void *a) {
     int n;
 
     while(true) {
-        // Read file name
+        // Get file name from input
         pthread_mutex_lock(&input_m);
         rc = get_stdin_input(file_name);
         pthread_mutex_unlock(&input_m);
         if (rc == false) return NULL;
-        // 
+
+        // Open the file
         FILE *fp;
         fp = fopen(file_name, "rb");
-        printf("%s\n%i\n", file_name, (int)strlen(file_name));
         if (fp == NULL) continue;
-        
-        while ((n = fread(buff, BUFSIZ, 1, fp)) > 0) {
+
+        // Read a chunk of file and caculate the CRC
+        while ((n = fread(buff, 1, BUFSIZ, fp)) > 0) {
             crc = crc32_raw(buff, n, crc);
         }
-        printf("%s: %x\n", file_name, crc);
+        fclose(fp);
 
+        // Output the result
+        pthread_mutex_lock(&output_m);
+        printf("%s: %x\n", file_name, crc);
+        pthread_mutex_unlock(&output_m);
     }
     return NULL;
 }

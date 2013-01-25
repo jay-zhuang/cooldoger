@@ -11,7 +11,7 @@ javaCode: Palindromer.java
 	$(JC) $(JFALAGS) Palindromer.java
 
 clean:
-	rm -rf Palindromer Palinderomer.class
+	rm -rf Palindromer Palindromer.class
 
 run: javaRun cRun
 

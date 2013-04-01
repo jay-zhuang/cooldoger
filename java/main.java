@@ -10,7 +10,13 @@ public class main {
         System.out.println(new Date());
         System.getProperties().list(System.out);
         System.out.println(System.getProperty("user.name"));
-        System.out.println(
-            System.getProperty("java.library.path"));
+        String s = "bc";
+
+        System.out.println(s*2);
+        System.out.println(s.length());
+        String b = "sdf";
+        if (s.length() > 3 || b.length() > 5) {
+            System.out.println("ddddddd");
+        }
     }
 }
